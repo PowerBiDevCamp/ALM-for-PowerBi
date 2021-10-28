@@ -1,0 +1,75 @@
+{
+  "name": "Product List",
+  "description": "",
+  "version": "1.0",
+  "culture": "en-US",
+  "modifiedTime": "2021-10-10T16:00:27.8391704+00:00",
+  "pbi:mashup": {
+    "fastCombine": false,
+    "allowNativeQueries": false,
+    "queriesMetadata": {
+      "Products": {
+        "queryId": "67569ba5-c9cd-462b-b17c-378d683aea3f",
+        "queryName": "Products",
+        "loadEnabled": true
+      },
+      "DatabaseServer": {
+        "queryId": "8182d46d-fcee-42d9-9adc-2bbffae0fe89",
+        "queryName": "DatabaseServer"
+      },
+      "DatabaseName": {
+        "queryId": "cae801e0-9584-4187-8563-19407b33a339",
+        "queryName": "DatabaseName"
+      }
+    },
+    "document": "section Section1;\r\nshared Products = let\r\n  Source = Sql.Database(DatabaseServer, DatabaseName),\r\n  Navigation = Source{[Schema = \"dbo\", Item = \"Products\"]}[Data],\r\n  RenamedColumns = Table.RenameColumns(Navigation, {{\"Title\", \"Product\"}}),\r\n  SplitColumnByDelimiter = Table.SplitColumn(RenamedColumns, \"ProductCategory\", Splitter.SplitTextByDelimiter(\" > \"), {\"Category\", \"Subcategory\"}),\r\n  ChooseColumns = Table.SelectColumns(SplitColumnByDelimiter, {\"ProductId\", \"ProductCode\", \"Product\", \"Description\", \"Category\", \"Subcategory\", \"ProductImageUrl\"})\r\nin\r\n  ChooseColumns;\r\nshared DatabaseServer = let\r\n  DatabaseServer = \"devcamp.database.windows.net\" meta [IsParameterQuery = true, IsParameterQueryRequired = true, Type = type text]\r\nin\r\n  DatabaseServer;\r\nshared DatabaseName = let\r\n  DatabaseName = \"WingtipSalesDev\" meta [IsParameterQuery = true, IsParameterQueryRequired = true, Type = type text]\r\nin\r\n  DatabaseName;\r\n"
+  },
+  "annotations": [
+    {
+      "name": "pbi:QueryGroups",
+      "value": "[]"
+    }
+  ],
+  "entities": [
+    {
+      "$type": "LocalEntity",
+      "name": "Products",
+      "description": "",
+      "pbi:refreshPolicy": {
+        "$type": "FullRefreshPolicy",
+        "location": "Products.csv"
+      },
+      "attributes": [
+        {
+          "name": "ProductId",
+          "dataType": "int64"
+        },
+        {
+          "name": "ProductCode",
+          "dataType": "string"
+        },
+        {
+          "name": "Product",
+          "dataType": "string"
+        },
+        {
+          "name": "Description",
+          "dataType": "string"
+        },
+        {
+          "name": "Category",
+          "dataType": "string"
+        },
+        {
+          "name": "Subcategory",
+          "dataType": "string"
+        },
+        {
+          "name": "ProductImageUrl",
+          "dataType": "string"
+        }
+      ],
+      "partitions": []
+    }
+  ]
+}
